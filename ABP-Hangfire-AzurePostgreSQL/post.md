@@ -8,7 +8,9 @@ At time of writing, this tutorial was compatible with ABP.io 9.2
 # Prerequisites
 
 Ensure you have:
+- A good understanding of Azure and Azure PostgreSQL
 - An Azure subscription with the rights to create an PostgreSQL server
+
 
 # Setup Azure PostgreSQL Flexible Server
 
@@ -215,7 +217,7 @@ From here you can easily extend this to work with other Azure Identities like Ap
 ```
 
 
-Also, I have submitted a [PR](https://github.com/hangfire-postgres/Hangfire.PostgreSql/pull/399) to the Hangfire.PostgreSql team, which will take care of the heavy lifting when using Azure Identities. Right now, the PR is not merged because the team is working on a major overhaul of the package and that will take some time
+Also, I have submitted a [PR](https://github.com/hangfire-postgres/Hangfire.PostgreSql/pull/399) to the Hangfire.PostgreSql team, which will mostly make this tutorial obsolete, since the code there will take the heavy lifting when using Azure Identities. Right now, the PR is not merged because the team is working on a major overhaul of the package and that will take some time
 
 # Acknowledgements 
 
