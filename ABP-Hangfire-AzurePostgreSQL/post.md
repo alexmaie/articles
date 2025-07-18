@@ -29,7 +29,15 @@ Create a new ABP application using the following command:
 abp new Article.HangfirePgsql -t app -u mvc --mobile none --database-provider ef -uost -csf -dbms PostgreSQL -smr
 ```
 
-This command creates a new project which is already configured to work with  PostgreSQL 
+This command creates a new project which is already configured to work with  PostgreSQL. 
+
+Note: If you don't have node installed, you can use the following change in the host module
+```
+Configure<AbpMvcLibsOptions>(options =>
+{
+    options.CheckLibs = false;
+});
+```
 
 # Configure ABP Application
 
@@ -124,12 +132,13 @@ If everything was configured correctly, then you will see a success message and 
 # Integrate Hangfire
 
 We are going to use the existing hangfire integration with ABP. For simplicity sake, we are just going to implement a basic worker so that we can test the use case.  
-1. Follow the steps from here https://abp.io/docs/latest/framework/infrastructure/background-workers/hangfire. For reference, install the module into project Article.HangfirePgsql.Application
-2. Install the Hangfire PostgreSQL package into project Article.HangfirePgsql.Web
+1. Follow the steps from here https://abp.io/docs/latest/framework/infrastructure/background-workers/hangfire. **Important**, in the abp documentation, under Configuration, there is a paragraph about setting up sql server. Please ignore that part, since we are going to configure hangfire with Postgres. 
+2. For reference, install the module into project Article.HangfirePgsql.Application
+3. Install the Hangfire PostgreSQL package into project Article.HangfirePgsql.Web
 ```
 dotnet add package Hangfire.PostgreSql
 ```
-3. Create a new class called  AzureManagedIdentityNpgsqlConnectionFactory in project Article.HangfirePgsql.Web with the following content
+4. Create a new class called  AzureManagedIdentityNpgsqlConnectionFactory in project Article.HangfirePgsql.Web with the following content
 ``` c#
     public class AzureManagedIdentityNpgsqlConnectionFactory(string connectionString, PostgreSqlStorageOptions options, [CanBeNull] Action<NpgsqlConnection>? connectionSetup = null) : NpgsqlInstanceConnectionFactoryBase(options)
     {
@@ -149,7 +158,7 @@ dotnet add package Hangfire.PostgreSql
 ```
 This class is used to generate a connection for the Hangfire provider, by using the Identity password generator. 
 
-4. Create a new method called ConfigureHangfire in HangfirePgsqlWebModule with the following content:
+5. Create a new method called ConfigureHangfire in HangfirePgsqlWebModule with the following content:
 ```c# 
 
     private static void ConfigureHangfire(ServiceConfigurationContext context, IConfiguration configuration)
@@ -169,7 +178,7 @@ This class is used to generate a connection for the Hangfire provider, by using 
 
     }
 ```
-5. Call method ConfigureHangfire from ConfigureServices
+6. Call method ConfigureHangfire from ConfigureServices
 
 As a final step, we are going to implement a test worker. Create the following class in project Article.HangfirePgsql.Application
 ``` c#
@@ -197,7 +206,7 @@ Register the worker in HangfirePgsqlApplicationModule
         await context.AddBackgroundWorkerAsync<MyLogWorker>();
     }
 ```
-6. Run project Article.HangfirePgsql.Web. Search in your output logs for "Executed MyLogWorker..!". If this sentence is present, it means that your integration is working like a charm
+7. Run project Article.HangfirePgsql.Web. Search in your output logs for "Executed MyLogWorker..!". If this sentence is present, it means that your integration is working like a charm
 ![final](images/final.png)
 
 
